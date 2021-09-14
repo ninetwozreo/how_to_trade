@@ -8,6 +8,7 @@ import sys
 import requests
 
 from utils.log import NOTICE, log, ERROR, RECORD
+from utils.wss import recive_from
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(BASE_DIR)
@@ -75,22 +76,41 @@ def get_useful_data(rc_data_html):
     return local_res
 
 # 获取网页信息
-def get_all_data(url,test_html):
+def just_begin(target):
+    pool=0
     
-    
-    if  test_html != '' :
-        print("测试数据已存在")
-    else:
-        test_html=crawl(url)
-        pass
-    str1=BeautifulSoup(test_html,'html.parser').findAll('script')[31].text
+    while 1 :
+        recive_from("wss://fstream.binance.com/stream?<symbol>@depth<levels>@100ms")
+        current_price=5
+        new_price=4.8
+        accepted=30
 
-    json1=json.loads(str1[19:len(str1)-1])['contents']['twoColumnBrowseResultsRenderer']['tabs'][1]['tabRenderer']
-    json2=json1['content']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents'][0]['gridRenderer']['items']
-    json3=json2[0]['gridVideoRenderer']['title']['runs']
-    dataMap=[]
-    print(json3)
-    exportToExcl(json3,"YouTube视频列表")
+        totalpeople+=accepted
+
+        pool+=new_price*accepted
+
+        if pool/accepted>current_price:
+            print("涨")
+        else:
+            print("跌")
+
+
+        print("测试数据已存在")
+        
+    
+    # if  test_html != '' :
+    #     print("测试数据已存在")
+    # else:
+    #     test_html=crawl(url)
+    #     pass
+    # str1=BeautifulSoup(test_html,'html.parser').findAll('script')[31].text
+
+    # json1=json.loads(str1[19:len(str1)-1])['contents']['twoColumnBrowseResultsRenderer']['tabs'][1]['tabRenderer']
+    # json2=json1['content']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents'][0]['gridRenderer']['items']
+    # json3=json2[0]['gridVideoRenderer']['title']['runs']
+    # dataMap=[]
+    # print(json3)
+    # exportToExcl(json3,"YouTube视频列表")
 
 def exportToExcl(res,fileName):
     execl = xlwt.Workbook()
@@ -104,10 +124,8 @@ def exportToExcl(res,fileName):
 
 
 if __name__ == '__main__':
-    url='https://www.youtube.com/c/ChainlinkOfficial/videos'
+    # url='https://www.youtube.com/c/ChainlinkOfficial/videos'
     sign = "youtube"
-    # if (sign == "pkulaw"):
-        # get_pku_law()
-    if (sign == "youtube"):
-        get_all_data(url,test_html)
+    # if (sign == "youtube"):
+    just_begin(sign)
 
